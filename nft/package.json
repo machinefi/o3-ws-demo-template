@@ -1,0 +1,19 @@
+{
+  "name": "nft",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "upload": "tsc && node ./dist/index.js",
+    "fund": "tsc && node ./dist/fund.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@bundlr-network/client": "^0.11.2",
+    "dotenv": "^16.0.3",
+    "typescript": "5.0.4",
+    "@types/node": "20.1.7"
+  }
+}
