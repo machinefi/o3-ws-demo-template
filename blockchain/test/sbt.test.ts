@@ -9,7 +9,7 @@ const SBT_CONTRACT_NAME = process.env.SBT_CONTRACT_NAME || "Device SBT";
 const SBT_CONTRACT_SYMBOL = process.env.SBT_CONTRACT_SYMBOL || "DSBT";
 const SBT_TOKEN_URI = process.env.SBT_URI || "";
 
-describe.only("DeviceSBT", function () {
+describe("DeviceSBT", function () {
   let [admin, minter, alice, bob, mallory]: Signer[] = [];
   let aliceAddr: string;
   let bobAddr: string;
