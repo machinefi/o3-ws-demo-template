@@ -19,7 +19,7 @@ describe("Device Binding", function () {
   });
 
   beforeEach(async function () {
-    const { DeviceBinding, DeviceRegistry } = await setup();
+    const { DeviceBinding, DeviceRegistry } = await getContracts();
     db = DeviceBinding;
     dr = DeviceRegistry;
   });
@@ -190,7 +190,7 @@ async function assertDevicesOwner(db: DeviceBinding, userAddr: string, deviceIds
   }
 }
 
-async function setup() {
+async function getContracts() {
   await deployments.fixture(["DeviceRegistry", "DeviceBinding"])
   const DeviceRegistry = await ethers.getContract("DeviceRegistry") as unknown as DeviceRegistry;
   const DeviceBinding = await ethers.getContract("DeviceBinding") as unknown as DeviceBinding;
