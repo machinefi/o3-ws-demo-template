@@ -2,11 +2,9 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomiclabs/hardhat-ethers";
 import "hardhat-deploy";
-import * as dotenv from "dotenv";
+import "dotenv/config";
 
 import "./tasks";
-
-dotenv.config();
 
 const config: HardhatUserConfig = {
   solidity: "0.8.17",
@@ -22,7 +20,7 @@ const config: HardhatUserConfig = {
     polygon: {
       url: "https://rpc-mainnet.maticvigil.com",
       accounts: [process.env.PRIVATE_KEY || ""],
-    }, 
+    },
     bsc: {
       url: "https://bsc-dataseed2.binance.org",
       accounts: [process.env.PRIVATE_KEY || ""],
