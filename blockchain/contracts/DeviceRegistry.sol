@@ -95,5 +95,6 @@ contract DeviceRegistry is Ownable {
         if (devices[_deviceId].isRegistered && devices[_deviceId].isActive) {
             return true;
         }
+        return false;
     }
 }
