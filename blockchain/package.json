@@ -3,6 +3,7 @@
   "scripts": {
     "compile": "hardhat compile",
     "test": "hardhat test --typecheck",
+    "coverage": "hardhat coverage",
     "deploy": "hardhat deploy",
     "deploy:testnet": "hardhat deploy --network testnet --export-all ../adapter/features/web3/contracts/deployments.json",
     "deploy:mainnet": "hardhat deploy --network mainnet --export-all ../adapter/features/web3/contracts/deployments.json"
