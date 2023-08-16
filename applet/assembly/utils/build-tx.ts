@@ -1,33 +1,26 @@
-import { composeAmountStr, intToHexStr, tokenNumberToHex } from "./wei-to-hex";
+import { buildTxSlot, buildTxString, ethToHex } from "@w3bstream/wasm-sdk/assembly/utility";
 
 export function buildTxData(
   functionAddr: string,
   recipient: string,
   tokenAmount: string
 ): string {
-  const slotForRecipient = buildRecepientSlot(recipient);
-  const slotForAmount = tokenNumberToHex(tokenAmount);
+  const slotForRecipient = buildTxSlot(recipient);
+  const slotForAmount = tokenNumberToTxSlot(tokenAmount);
 
   return buildTxString([functionAddr, slotForRecipient, slotForAmount]);
 }
 
-export function buildRecepientSlot(recipient: string): string {
-  return `000000000000000000000000${formatAddress(recipient)}`;
-}
-
-export function buildDeviceIdSlot(deviceId: string): string {
-  return formatAddress(deviceId);
-}
-
 export function buildUINT256Slot(amount: u64): string {
   const hexStr = intToHexStr(amount);
-  return composeAmountStr(hexStr);
+  return buildTxSlot(hexStr);
 }
 
-export function formatAddress(address: string): string {
-  return address.replaceAll("0x", "");
+function tokenNumberToTxSlot<T>(value: T): string {
+  const ethHex = ethToHex(value);
+  return buildTxSlot(ethHex);
 }
 
-export function buildTxString(args: string[]): string {
-  return "0x" + args.join("");
+function intToHexStr(value: u64): string {
+  return value.toString(16);
 }

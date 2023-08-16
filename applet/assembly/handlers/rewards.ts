@@ -2,13 +2,9 @@ import { GetEnv, JSON, Log, QuerySQL, SendTx } from "@w3bstream/wasm-sdk";
 import { String } from "@w3bstream/wasm-sdk/assembly/sql";
 
 import { getField } from "../utils/payload-parser";
-import {
-  buildUINT256Slot,
-  buildRecepientSlot,
-  buildTxString,
-} from "../utils/build-tx";
-
-const APPROVE_FUNCTION_ADDR = "426a8493";
+import { buildUINT256Slot } from "../utils/build-tx";
+import { buildTxSlot, buildTxString } from "@w3bstream/wasm-sdk/assembly/utility";
+import { APPROVE_FUNCTION_SELECTOR } from "../../constants";
 
 export function handle_analyze_data(rid: i32): i32 {
   const drivenDistances = getDrivenDistance();
@@ -120,7 +116,7 @@ function getOwnerAddr(deviceId: string): string {
 }
 
 function approveRewardsNFT(to: string, amount: number): void {
-  const txData = buildTxData(APPROVE_FUNCTION_ADDR, to, 1, amount);
+  const txData = buildTxData(APPROVE_FUNCTION_SELECTOR, to, 1, amount);
   const REWARDS_CONTRACT_ADDRESS = GetEnv("REWARDS_CONTRACT_ADDRESS");
   const CHAIN_ID = GetEnv("CHAIN_ID");
   SendTx(i32(parseInt(CHAIN_ID)), REWARDS_CONTRACT_ADDRESS, "0", txData);
@@ -132,7 +128,7 @@ function buildTxData(
   tierId: number,
   amount: number
 ): string {
-  const slotForRecipient = buildRecepientSlot(recipient);
+  const slotForRecipient = buildTxSlot(recipient);
   const slotForTierId = buildUINT256Slot(u64(tierId));
   const slotForAmount = buildUINT256Slot(u64(amount));
 

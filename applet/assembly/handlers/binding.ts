@@ -8,14 +8,9 @@ import {
 } from "@w3bstream/wasm-sdk";
 import { String, Bool } from "@w3bstream/wasm-sdk/assembly/sql";
 
+import { APPROVE_SBT_FUNCTION_SELECTOR } from './../../constants';
 import { getField, getPayloadValue } from "../utils/payload-parser";
-import {
-  buildDeviceIdSlot,
-  buildRecepientSlot,
-  buildTxString,
-} from "../utils/build-tx";
-
-const APPROVE_FUNCTION_ADDR = "74cdd192";
+import { buildTxData } from "../utils/build-tx";
 
 export function handle_device_registration(rid: i32): i32 {
   Log("New Device Registration Detected: ");
@@ -40,7 +35,7 @@ export function handle_device_binding(rid: i32): i32 {
 
   storeDeviceBinding(deviceId, ownerAddr);
 
-  // approveSBT(ownerAddr, deviceId);
+  approveSBT(ownerAddr, deviceId);
   return 0;
 }
 
@@ -80,19 +75,8 @@ function storeDeviceId(deviceId: string): void {
 }
 
 function approveSBT(ownerAddress: string, deviceId: string): void {
-  const txData = buildTxData(APPROVE_FUNCTION_ADDR, ownerAddress, deviceId);
+  const txData = buildTxData(APPROVE_SBT_FUNCTION_SELECTOR, ownerAddress, deviceId);
   const SBT_CONTRACT_ADDRESS = GetEnv("SBT_CONTRACT_ADDRESS");
   const CHAIN_ID = GetEnv("CHAIN_ID");
   SendTx(i32(parseInt(CHAIN_ID)), SBT_CONTRACT_ADDRESS, "0", txData);
-}
-
-function buildTxData(
-  functionAddr: string,
-  recipient: string,
-  deviceId: string
-): string {
-  const slotForRecipient = buildRecepientSlot(recipient);
-  const slotForDeviceId = buildDeviceIdSlot(deviceId);
-
-  return buildTxString([functionAddr, slotForRecipient, slotForDeviceId]);
 }
