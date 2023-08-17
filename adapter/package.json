@@ -27,6 +27,7 @@
     "tailwindcss": "3.3.2",
     "typescript": "5.0.4",
     "viem": "^0.3.30",
+    "w3bstream-client-js": "^3.0.0",
     "wagmi": "^1.0.5",
     "zustand": "^4.3.8"
   },

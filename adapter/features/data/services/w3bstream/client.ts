@@ -1,42 +1,41 @@
 import "server-only";
 
-import { HTTP_ROUTE, DEVICE_TOKEN } from "@/app/config";
-import { hashString } from "@/features/secrets/utils/hash";
+import { W3bstreamClient, WSHeader } from "w3bstream-client-js";
 
-const myHeaders = new Headers();
-myHeaders.append("Content-Type", "application/json");
-myHeaders.append("Authorization", `Bearer ${DEVICE_TOKEN}`);
+import { HTTP_ROUTE, API_TOKEN } from "@/app/config";
 
-const requestOptions: any = {
-  method: "POST",
-  headers: myHeaders,
-};
+const client = new W3bstreamClient(HTTP_ROUTE, API_TOKEN);
 
 const DATA_EVENT_TYPE = "";
 const TRIGGER_REWARDS_EVENT_TYPE = "";
 
-export async function uploadDistanceToWS(device: { id: string, value: number }) {
-  requestOptions.body = JSON.stringify({
-    deviceId: "0x" + hashString(device.id),
-    data: device.value,
-  });
+export async function uploadDataToWS({ id, value }: { id: string, value: number }) {
+  const header: WSHeader = {
+    device_id: id,
+    event_type: DATA_EVENT_TYPE,
+    timestamp: Date.now(),
+  }
+  const payload = {
+    data: value,
+  }
 
-  await sendRequest(
-    HTTP_ROUTE.trim() + `?eventType=${DATA_EVENT_TYPE}`,
-    requestOptions
-  );
+  await sendRequest(header, payload)
 }
 
-export async function triggerEvaluation() {
-  await sendRequest(
-    HTTP_ROUTE.trim() + `?eventType=${TRIGGER_REWARDS_EVENT_TYPE}`,
-    requestOptions
-  );
+export async function triggerEvaluation(deviceId: string) {
+  const header: WSHeader = {
+    device_id: "deviceId",
+    event_type: TRIGGER_REWARDS_EVENT_TYPE,
+    timestamp: Date.now(),
+  }
+  const payload = {}
+
+  await sendRequest(header, payload)
 }
 
-async function sendRequest(route: string, options: any) {
+async function sendRequest(header: WSHeader, payload: Object | Buffer) {
   try {
-    await fetch(route, options);
+    await client.publishSingle(header, payload);
   } catch (error) {
     console.error("Error while sending request to w3bstream", error);
     throw new Error("Error while sending request to w3bstream");
