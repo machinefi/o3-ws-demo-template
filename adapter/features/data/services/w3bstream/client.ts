@@ -24,7 +24,7 @@ export async function uploadDataToWS({ id, value }: { id: string, value: number 
 
 export async function triggerEvaluation(deviceId: string) {
   const header: WSHeader = {
-    device_id: "deviceId",
+    device_id: deviceId,
     event_type: TRIGGER_REWARDS_EVENT_TYPE,
     timestamp: Date.now(),
   }
