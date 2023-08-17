@@ -1,6 +1,6 @@
-# DIMO integration with W3bstream
+# OPTION 3 INTEGRATION TEMPLATE
 
-_An example of tokenizing training session proofs via [W3bstream protocol](https://w3bstream.com) and [DIMO](https://dimo.zone)_
+_An template for integration of 3P API with [W3bstream protocol](https://w3bstream.com)_
 
 ## Table of Contents
 
@@ -74,7 +74,7 @@ Follow the steps below to set up and run the project.
 - Find the `HTTP_ROUTE` under Events.
 - Start the client by running `npm run dev` and navigate to localhost:3000 in your web browser.
 - Follow the on-screen instructions to register your device and claim your SBT.
-- Sync the DIMO data and then recheck the studio db and proceed to claim your rewards.
+- Sync the 3P Devices data and then recheck the studio db and proceed to claim your rewards.
 - Import the NFTs into Metamask.
 
 Congratulations, you have successfully set up and run your project!
