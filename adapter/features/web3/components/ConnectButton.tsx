@@ -1,4 +1,5 @@
 import { useAccount, useConnect, useNetwork, useSwitchNetwork } from "wagmi";
+import { checkIfContractExists } from "../services/viem/nft";
 
 export const WithWallet = ({ children }: { children: React.ReactNode }) => {
   const { isConnected } = useAccount();
@@ -8,7 +9,7 @@ export const WithWallet = ({ children }: { children: React.ReactNode }) => {
     return <ConnectHandler />;
   }
 
-  if (chain.unsupported) {
+  if (chain.unsupported || !checkIfContractExists(chain.id)) {
     return <SwitchHandler />;
   }
 
@@ -54,16 +55,18 @@ const SwitchHandler = () => {
   return (
     <div className="flex flex-col gap-2 items-center">
       Switch to a supported network:
-      {chains.map((chain) => (
-      <button
-        disabled={!switchNetwork || isLoading}
-        key={chain.id}
-        onClick={() => switchNetwork?.(chain.id)}
-        className="btn-primary w-full"
-      >
-        {chain.name}
-        {isLoading && pendingChainId === chain.id && " (switching)"}
-      </button>
+      {chains
+        .filter((chain) => checkIfContractExists(chain.id))
+        .map((chain) => (
+        <button
+          disabled={!switchNetwork || isLoading}
+          key={chain.id}
+          onClick={() => switchNetwork?.(chain.id)}
+          className="btn-primary w-full"
+        >
+          {chain.name}
+          {isLoading && pendingChainId === chain.id && " (switching)"}
+        </button>
       ))}
     </div>
   )

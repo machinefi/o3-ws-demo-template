@@ -2,6 +2,7 @@
 
 import {
   useContractWrite,
+  useNetwork,
   usePrepareContractWrite,
   useWaitForTransaction,
 } from "wagmi";
@@ -9,9 +10,11 @@ import {
 import { rewardsContract } from "@/features/web3/services/viem/nft";
 
 export const CollectButton = ({ tier }: { tier: number }) => {
+  const {chain} = useNetwork();
+  
   const { config } = usePrepareContractWrite({
-    address: rewardsContract.address,
-    abi: rewardsContract.abi,
+    address: rewardsContract(chain?.id || 0)?.address,
+    abi: rewardsContract(chain?.id || 0)?.abi as any,
     functionName: "mintFromAllowance",
     args: [tier, []],
   });
