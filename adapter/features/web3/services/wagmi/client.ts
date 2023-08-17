@@ -1,10 +1,10 @@
 import { configureChains, createConfig } from "wagmi";
-import { iotexTestnet, iotex, mainnet, polygon, bsc } from "@wagmi/chains";
+import { iotexTestnet, iotex, mainnet, polygon, bsc, polygonMumbai } from "@wagmi/chains";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { connectors } from "./connectors";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [iotexTestnet, iotex, mainnet, polygon, bsc],
+  [iotexTestnet, iotex, mainnet, polygon, bsc, polygonMumbai],
   [
     jsonRpcProvider({
       rpc: (chain) => ({ http: chain.rpcUrls.default.http[0] }),
