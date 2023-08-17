@@ -6,7 +6,7 @@ import useStore from "../../store";
 
 export const TokenInput = () => {
   const {
-    token: dimoToken,
+    token,
     setToken,
     setErrorMsg,
   } = useStore((state) => state);
@@ -37,10 +37,10 @@ export const TokenInput = () => {
 
   return (
     <input
-      id="oura-token"
+      id="token"
       type="password"
       placeholder="Enter your access token"
-      value={dimoToken}
+      value={token}
       onChange={handleInputChange}
     />
   );

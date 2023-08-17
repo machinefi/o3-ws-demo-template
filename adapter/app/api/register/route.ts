@@ -3,15 +3,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { hashString as hashDeviceId } from "@/features/secrets/utils/hash";
 import { registerDevice } from "@/features/web3/services/viem/registrationContract";
 import { bindDevice } from "@/features/web3/services/viem/bindingContract";
-import { fetchUserDevices } from "@/features/data/services/dimo/get-user-devices";
-import { encrypt as encryptDimoJWT } from "@/features/secrets/utils/encryption";
-import { store } from "@/features/secrets/services/redis/store";
-import { DIMO_REDIS_TOKEN_KEY } from "@/app/config";
 
+// A route for registering devices on-chain
 export async function POST(req: NextRequest) {
-  const { dimoToken, ownerAddr } = await req.json();
+  const { accessToken, ownerAddr } = await req.json();
 
-  if (!dimoToken || !ownerAddr) {
+  if (!accessToken || !ownerAddr) {
     return NextResponse.json(
       { error: "Not valid credentials" },
       { status: 401 }
@@ -19,30 +16,21 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const userDevices = await fetchUserDevices(dimoToken);
+    // TODO: get user devices from db
+    const userDevices: { id: string }[] = [];
     const hashedDeviceIds = userDevices.map(
       (device) => "0x" + hashDeviceId(device.id)
     );
-    const encryptedObj = encryptDimoJWT(dimoToken);
-    await storeDimoJWT(encryptedObj, ownerAddr);
 
     const txResults = await registerOnChain(hashedDeviceIds, ownerAddr);
 
     return NextResponse.json({
       success: true,
-      nfts: userDevices.map((device) => device.nft?.tokenId || 0).filter(Boolean),
       txResults,
     });
   } catch (e: any) {
     console.log(e);
     return NextResponse.json({ error: e.message }, { status: 400 });
-  }
-}
-
-async function storeDimoJWT(encryptedObj: any, ownerAddr: string) {
-  const res = await store(DIMO_REDIS_TOKEN_KEY + ownerAddr, encryptedObj);
-  if (!res) {
-    throw new Error("Failed to store dimo token");
   }
 }
 

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { INTEGRATION_NAME } from "./config";
 
 export default function Home() {
   return (
@@ -12,13 +13,13 @@ export default function Home() {
   );
 }
 
-const Title = () => <h1>DIMO &lt;&gt; W3bstream</h1>;
+const Title = () => <h1>{INTEGRATION_NAME} &lt;&gt; W3bstream</h1>;
 
 const Description = () => (
   <p className="text-xl text-center mt-4">
     This is a demo of the{" "}
-    <a target="_blank" href="https://dimo.zone/">
-      DIMO
+    <a target="_blank" href="">
+      {INTEGRATION_NAME}
     </a>{" "}
     integration with{" "}
     <a target="_blank" href="https://w3bstream.com/">

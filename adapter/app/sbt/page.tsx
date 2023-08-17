@@ -1,4 +1,5 @@
 import Devices from "./Devices";
+import { INTEGRATION_NAME } from "../config";
 
 export default function DevicesPage() {
   return (
@@ -6,7 +7,7 @@ export default function DevicesPage() {
       <div className="flex flex-col gap-4 text-center">
         <h1>Your Devices</h1>
         <p className="text-secondary-400">
-          This is the list of your DIMO NFTs: <br />
+          This is the list of your {INTEGRATION_NAME} NFTs: <br />
         </p>
       </div>
       <Devices />

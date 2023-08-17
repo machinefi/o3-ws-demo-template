@@ -1,7 +1,6 @@
 import "server-only";
 
 import { HTTP_ROUTE, DEVICE_TOKEN } from "@/app/config";
-import { DeviceWithDistances } from "@/app/types";
 import { hashString } from "@/features/secrets/utils/hash";
 
 const myHeaders = new Headers();
@@ -13,28 +12,24 @@ const requestOptions: any = {
   headers: myHeaders,
 };
 
-const DISTANCE_DATA_EVENT_TYPE = "DISTANCE_DATA";
-const ANALYZE_DISTANCE_DATA_EVENT_TYPE = "ANALYZE_DISTANCE_DATA";
+const DATA_EVENT_TYPE = "";
+const TRIGGER_REWARDS_EVENT_TYPE = "";
 
-export async function uploadDistanceToWS(device: DeviceWithDistances) {
-  if (!device.distances || device.distances.length === 0) {
-    return;
-  }
-
+export async function uploadDistanceToWS(device: { id: string, value: number }) {
   requestOptions.body = JSON.stringify({
     deviceId: "0x" + hashString(device.id),
-    distances: device.distances,
+    data: device.value,
   });
 
   await sendRequest(
-    HTTP_ROUTE.trim() + `?eventType=${DISTANCE_DATA_EVENT_TYPE}`,
+    HTTP_ROUTE.trim() + `?eventType=${DATA_EVENT_TYPE}`,
     requestOptions
   );
 }
 
 export async function triggerEvaluation() {
   await sendRequest(
-    HTTP_ROUTE.trim() + `?eventType=${ANALYZE_DISTANCE_DATA_EVENT_TYPE}`,
+    HTTP_ROUTE.trim() + `?eventType=${TRIGGER_REWARDS_EVENT_TYPE}`,
     requestOptions
   );
 }

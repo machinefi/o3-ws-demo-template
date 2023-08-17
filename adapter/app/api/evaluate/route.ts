@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { triggerEvaluation } from "@/features/data/services/w3bstream/client";
 
+// A route for triggering rewards minting
 export async function POST() {
   try {
     await triggerEvaluation();

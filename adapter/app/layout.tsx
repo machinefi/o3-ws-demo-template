@@ -1,13 +1,14 @@
 import Providers from "./providers";
 import "./globals.css";
 import { Navbar } from "./Navbar";
+import { INTEGRATION_NAME } from "./config";
 
 export const metadata = {
-  title: "DIMO Demo",
-  description: "DIMO integration demo",
+  title: `${INTEGRATION_NAME} Demo`,
+  description: `${INTEGRATION_NAME} integration demo`,
 };
 
-export default async function RootLayout({
+export default async function RootLayout ({
   children,
 }: {
   children: React.ReactNode;

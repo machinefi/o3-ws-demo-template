@@ -14,7 +14,7 @@ export const RegisterButton = () => {
   const [success, setSuccess] = useState(false);
 
   const { timeLeft, reset, tick, started, start, stop } = useTimer(30);
-  const { token: dimoToken, errorMsg } = useStore((state) => state);
+  const { token, errorMsg } = useStore((state) => state);
   const { address: ownerAddr, isDisconnected } = useAccount();
 
   const countDown = useRef<NodeJS.Timeout>();
@@ -33,7 +33,7 @@ export const RegisterButton = () => {
 
     try {
       const res = await axios.post("/api/register", {
-        dimoToken,
+        accessToken: token,
         ownerAddr,
       });
       const { nfts } = res.data;
@@ -72,7 +72,7 @@ export const RegisterButton = () => {
   return (
     <button
       disabled={
-        isDisconnected || loading || success || !dimoToken || !!errorMsg
+        isDisconnected || loading || success || !token || !!errorMsg
       }
       onClick={handleClick}
       className="btn-outline-primary"

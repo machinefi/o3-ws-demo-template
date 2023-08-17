@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import arduino from "public/arduino.png";
 
 import { useDeviceIds } from "@/hooks/useDeviceIds";
-import { DIMO_DEVICES_API_BASE_URL, DIMO_VEHICLE_API } from "../config";
 import { ErrorText } from "../components/text/ErrorText";
 
 export default function Devices() {
@@ -41,23 +40,13 @@ interface DeviceMetadata {
   image: string;
 }
 
-const DeviceNFT = ({ id }: { id: string }) => {
-  const [metadata, setMetadata] = useState<DeviceMetadata | undefined>();
-
-  useEffect(() => {
-    const fetchMetadata = async () => {
-      const res = await axios.get(
-        DIMO_DEVICES_API_BASE_URL + DIMO_VEHICLE_API + "/" + id
-      );
-      setMetadata(res.data);
-    };
-    fetchMetadata();
-  }, []);
+const DeviceNFT = (props: { id: string }) => {
+  const [metadata] = useState<DeviceMetadata | undefined>();
 
   return (
     <div className="relative group flex flex-col text-center items-center justify-center gap-4">
       <Image
-        src={metadata?.image || ""}
+        src={metadata?.image || arduino}
         className="rounded-lg border border-primary-900 border-small"
         alt={metadata?.name || "Device image"}
         width={300}
@@ -70,8 +59,8 @@ const DeviceNFT = ({ id }: { id: string }) => {
       >
         <div className="flex justify-between w-full">
           <div className="font-normal">
-            <p className="text-md">{metadata?.name}</p>
-            <p className="text-sm">{metadata?.description}</p>
+            <p className="text-md">{metadata?.name || "name"}</p>
+            <p className="text-sm">{metadata?.description || "description"}</p>
           </div>
         </div>
       </div>
