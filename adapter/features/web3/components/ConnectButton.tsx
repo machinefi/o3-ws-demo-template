@@ -1,15 +1,14 @@
 import { useAccount, useConnect, useNetwork, useSwitchNetwork } from "wagmi";
-import { iotexTestnet } from "viem/chains";
 
 export const WithWallet = ({ children }: { children: React.ReactNode }) => {
   const { isConnected } = useAccount();
   const { chain } = useNetwork();
 
-  if (!isConnected) {
+  if (!isConnected || !chain?.id) {
     return <ConnectHandler />;
   }
 
-  if (chain!.id !== iotexTestnet.id) {
+  if (chain.unsupported) {
     return <SwitchHandler />;
   }
 
@@ -50,22 +49,22 @@ const ConnectHandler = () => {
 };
 
 const SwitchHandler = () => {
-  const { chain } = useNetwork();
-  const { isLoading, pendingChainId, switchNetwork } = useSwitchNetwork({
-    chainId: iotexTestnet.id,
-  });
+  const { isLoading, pendingChainId, switchNetwork, chains } = useSwitchNetwork();
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col gap-2 items-center">
+      Switch to a supported network:
+      {chains.map((chain) => (
       <button
-        disabled={!switchNetwork || chain?.id === iotexTestnet.id}
-        key={iotexTestnet.id}
-        onClick={() => switchNetwork?.(iotexTestnet.id)}
-        className="btn-primary"
+        disabled={!switchNetwork || isLoading}
+        key={chain.id}
+        onClick={() => switchNetwork?.(chain.id)}
+        className="btn-primary w-full"
       >
-        Switch to {iotexTestnet.name}
-        {isLoading && pendingChainId === iotexTestnet.id && " (switching)"}
+        {chain.name}
+        {isLoading && pendingChainId === chain.id && " (switching)"}
       </button>
+      ))}
     </div>
-  );
+  )
 };
