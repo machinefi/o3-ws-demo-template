@@ -1,6 +1,6 @@
 "use client";
 
-import { useAccount, useContractRead, useContractReads } from "wagmi";
+import { useAccount, useContractRead, useNetwork } from "wagmi";
 
 import { rewardsContract } from "@/features/web3/services/viem/nft";
 import { CollectButton } from "./CollectButton";
@@ -14,13 +14,15 @@ export const CollectibleList = () => {
   const [copied, setCopied] = useState(false);
 
   const { address } = useAccount();
+  const {chain} = useNetwork();
+
   const {
     data: nftAllowanceData,
     isLoading,
     isError,
   } = useContractRead({
-    address: rewardsContract.address,
-    abi: rewardsContract.abi as any,
+    address: rewardsContract(chain?.id || 0)?.address,
+    abi: rewardsContract(chain?.id || 0)?.abi as any,
     functionName: "allowance",
     args: [TOKEN_ID, address ?? ""],
     watch: true,
@@ -32,8 +34,8 @@ export const CollectibleList = () => {
   >();
 
   const { data: nftUri }: { data: string | undefined } = useContractRead({
-    address: rewardsContract.address,
-    abi: rewardsContract.abi as any,
+    address: rewardsContract(chain?.id || 0)?.address,
+    abi: rewardsContract(chain?.id || 0)?.abi as any,
     functionName: "uri",
     args: [1],
   });
@@ -72,11 +74,11 @@ export const CollectibleList = () => {
           <p
             className="text-secondary-500 hover:cursor-pointer"
             onClick={() => {
-              navigator.clipboard.writeText(rewardsContract.address);
+              navigator.clipboard.writeText(rewardsContract(chain?.id || 0)?.address);
               setCopied(true);
             }}
           >
-            Address: {rewardsContract.address} -{" "}
+            Address: {rewardsContract(chain?.id || 0)?.address} -{" "}
             {copied ? "Copied!" : "Click to copy"}
           </p>
         </div>
