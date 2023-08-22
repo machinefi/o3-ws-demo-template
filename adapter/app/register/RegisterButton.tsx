@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { useAccount } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import axios from "axios";
 import Link from "next/link";
 
@@ -16,6 +16,7 @@ export const RegisterButton = () => {
   const { timeLeft, reset, tick, started, start, stop } = useTimer(30);
   const { token, errorMsg } = useStore((state) => state);
   const { address: ownerAddr, isDisconnected } = useAccount();
+  const { chain } = useNetwork();
 
   const countDown = useRef<NodeJS.Timeout>();
 
@@ -35,6 +36,7 @@ export const RegisterButton = () => {
       const res = await axios.post("/api/register", {
         accessToken: token,
         ownerAddr,
+        chainId: chain?.id,
       });
       const { nfts } = res.data;
       updateDevicesInLocalStorage(nfts);

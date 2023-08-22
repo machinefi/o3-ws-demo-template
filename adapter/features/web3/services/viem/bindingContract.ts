@@ -1,28 +1,32 @@
 import "server-only";
 
-import { getContract } from "viem";
-
 import * as deployments from "../../contracts/deployments.json";
 import { walletClient, publicClient } from "./client";
 
-const bindingConfig = (deployments as any)[4690][0].contracts.DeviceBinding;
-
-export const bindingContract = getContract({
-  address: bindingConfig.address as `0x${string}`,
-  abi: bindingConfig.abi,
-});
-
 const ZERO_ADDR = "0x0000000000000000000000000000000000000000";
 
-export async function bindDevice(deviceIds: string[], ownerAddr: string) {
-  const bindingStates = await getBindingStates(deviceIds);
+const bindingContract = (chainId: number) => {
+  const bindingConfig = (deployments as any)[chainId]?.[0].contracts.DeviceBinding;
+
+  if (!bindingConfig) throw new Error(`No Binding contract found for chainId ${chainId}`);
+
+  return {
+    address: bindingConfig.address as `0x${string}`,
+    abi: bindingConfig.abi,
+  }
+}
+
+export async function bindDevice(deviceIds: string[], ownerAddr: string, chainId: number) {
+  const bindingStates = await getBindingStates(deviceIds, chainId);
 
   const devicesToBind = deviceIds.filter((_, index) => !bindingStates[index]);
 
+  const { address, abi } = bindingContract(chainId);
+
   const { request } = await publicClient.simulateContract({
     account: walletClient.account,
-    address: bindingConfig.address as `0x${string}`,
-    abi: bindingConfig.abi,
+    address,
+    abi,
     functionName: "bindDevices",
     args: [devicesToBind, ownerAddr],
   });
@@ -30,16 +34,17 @@ export async function bindDevice(deviceIds: string[], ownerAddr: string) {
   return publicClient.waitForTransactionReceipt({ hash, confirmations: 1 });
 }
 
-async function getBindingStates(deviceIds: string[]): Promise<boolean[]> {
-  const bindingStates = await Promise.all(deviceIds.map(getBindingState));
+async function getBindingStates(deviceIds: string[], chainId: number): Promise<boolean[]> {
+  const bindingStates = await Promise.all(deviceIds.map((deviceId) => getBindingState(deviceId, chainId)));
   return bindingStates.map((state) => state != ZERO_ADDR);
 }
 
-async function getBindingState(deviceId: string): Promise<string> {
+async function getBindingState(deviceId: string, chainId: number): Promise<string> {
+  const { address, abi } = bindingContract(chainId);
   try {
     return publicClient.readContract({
-      address: bindingConfig.address as `0x${string}`,
-      abi: bindingConfig.abi,
+      address,
+      abi,
       functionName: "getDeviceOwner",
       args: [deviceId],
     }) as unknown as string;

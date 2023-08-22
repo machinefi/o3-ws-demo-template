@@ -1,19 +1,22 @@
 import "server-only";
 
-import { getContract } from "viem";
-
 import * as deployments from "../../contracts/deployments.json";
 import { walletClient, publicClient } from "./client";
 
-const registryConfig = (deployments as any)[4690][0].contracts.DeviceRegistry;
 
-export const registryContract = getContract({
-  address: registryConfig.address as `0x${string}`,
-  abi: registryConfig.abi,
-});
+const registryContract = (chainId: number) => {
+  const registryConfig = (deployments as any)[chainId]?.[0].contracts.DeviceRegistry;
 
-export async function registerDevice(deviceIds: string[]) {
-  const devicesStatuses = await getDeviceStatuses(deviceIds);
+  if (!registryConfig) throw new Error(`No Registry contract found for chainId ${chainId}`);
+
+  return {
+    address: registryConfig.address as `0x${string}`,
+    abi: registryConfig.abi,
+  }
+}
+
+export async function registerDevice(deviceIds: string[], chainId: number) {
+  const devicesStatuses = await getDeviceStatuses(deviceIds, chainId);
   const devicesToRegister = deviceIds.filter(
     (_, index) => !devicesStatuses[index]
   );
@@ -22,10 +25,12 @@ export async function registerDevice(deviceIds: string[]) {
     return { transactionHash: "already registered" };
   }
 
+  const { address, abi } = registryContract(chainId);
+
   const { request } = await publicClient.simulateContract({
     account: walletClient.account,
-    address: registryConfig.address as `0x${string}`,
-    abi: registryConfig.abi,
+    address,
+    abi,
     functionName: "registerDevices",
     args: [devicesToRegister],
   });
@@ -33,11 +38,13 @@ export async function registerDevice(deviceIds: string[]) {
   return publicClient.waitForTransactionReceipt({ hash, confirmations: 1 });
 }
 
-async function getDeviceStatuses(deviceIds: string[]): Promise<boolean[]> {
+async function getDeviceStatuses(deviceIds: string[], chainId: number): Promise<boolean[]> {
+  const { address, abi } = registryContract(chainId);
+
   try {
     return publicClient.readContract({
-      address: registryConfig.address as `0x${string}`,
-      abi: registryConfig.abi,
+      address,
+      abi,
       functionName: "isAuthorizedDevices",
       args: [deviceIds],
     }) as Promise<boolean[]>;

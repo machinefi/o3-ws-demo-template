@@ -6,12 +6,19 @@ import { bindDevice } from "@/features/web3/services/viem/bindingContract";
 
 // A route for registering devices on-chain
 export async function POST(req: NextRequest) {
-  const { accessToken, ownerAddr } = await req.json();
+  const { accessToken, ownerAddr, chainId } = await req.json();
 
   if (!accessToken || !ownerAddr) {
     return NextResponse.json(
       { error: "Not valid credentials" },
       { status: 401 }
+    );
+  }
+
+  if (!chainId) {
+    return NextResponse.json(
+      { error: "Not valid chainId" },
+      { status: 400 }
     );
   }
 
@@ -22,7 +29,7 @@ export async function POST(req: NextRequest) {
       (device) => "0x" + hashDeviceId(device.id)
     );
 
-    const txResults = await registerOnChain(hashedDeviceIds, ownerAddr);
+    const txResults = await registerOnChain(hashedDeviceIds, ownerAddr, chainId);
 
     return NextResponse.json({
       success: true,
@@ -34,10 +41,10 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function registerOnChain(deviceIds: string[], ownerAddr: string) {
+async function registerOnChain(deviceIds: string[], ownerAddr: string, chainId: number) {
   try {
-    const registerTx = await registerDevice(deviceIds);
-    const bindTx = await bindDevice(deviceIds, ownerAddr);
+    const registerTx = await registerDevice(deviceIds, chainId);
+    const bindTx = await bindDevice(deviceIds, ownerAddr, chainId);
     return {
       registerTx: registerTx.transactionHash,
       bindTx: bindTx.transactionHash,
