@@ -19,6 +19,8 @@ Before you begin, there are several prerequisites that must be met:
 
 ### NFT URI
 
+> This step is optional, you can use the provided NFTs URIs, but if you want to use your own, please follow the instructions below.
+
 > You will need to upload one image and one metadata JSON file for the ERC721 Device SBT.
 > For the ERC1155 Rewards - one image along with its corresponding metadata JSON file to represent the Rewards for completed training sessions.
 
@@ -38,7 +40,7 @@ Follow the steps below to set up and run the project.
 ### Step 1: Repository Cloning and Dependency Installation
 
 - Begin by clicking "use this template" which houses three directories: `adapter`, `applet` and `blockchain`.
-- Install the necessary dependencies in each directory by running `npm i`.
+- Install the necessary dependencies by running `npm i`.
 
 ### Step 2: Blockchain Environment Preparation
 
@@ -69,7 +71,7 @@ Follow the steps below to set up and run the project.
 ### Step 5: Adapter Configuration
 
 - Create a new file named `.env.local` and populate it with the variables from `.env.template`.
-- Navigate to Account Settings in the studio interface to create an API key and update `API_TOKEN`.
+- Navigate to Account Settings in the studio interface to create an API key with `Publisher and Event` read and write persmisisons and update `API_TOKEN` in `.env.local`.
 - `NEXTAUTH_SECRET` can be aquired in [Vercel secret generator](https://generate-secret.vercel.app/32)
 - Find the `HTTP_ROUTE` under Events.
 - Start the client by running `npm run dev` and navigate to localhost:3000 in your web browser.
