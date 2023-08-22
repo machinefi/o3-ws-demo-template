@@ -2,6 +2,7 @@
     "name": "root",
     "workspaces": [
         "adapter",
-        "applet"
+        "applet",
+        "blockchain"
     ]
 }
